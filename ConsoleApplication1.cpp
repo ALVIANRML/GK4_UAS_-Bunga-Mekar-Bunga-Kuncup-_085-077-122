@@ -125,3 +125,87 @@ void display() {
 
     glutSwapBuffers();
 }
+
+// Fungsi untuk animasi bunga
+void update(int value) {
+    if (blooming) {
+        bloomScale += 0.005f;  // Mengurangi laju perubahan untuk animasi lebih lambat
+        if (bloomScale >= 1.0f) {
+            blooming = false; // Mulai menguncup
+        }
+    }
+    else {
+        bloomScale -= 0.005f;  // Mengurangi laju perubahan untuk animasi lebih lambat
+        if (bloomScale <= 0.0f) {
+            blooming = true; // Mulai mekar
+        }
+    }
+
+    // Perbarui posisi awan
+    cloudPosX += cloudSpeed;
+    if (cloudPosX > 2.0f) {
+        cloudPosX = -2.0f;  // Reset posisi awan ketika sudah melewati batas
+    }
+
+    glutPostRedisplay();             // Perbarui tampilan
+    glutTimerFunc(33, update, 0);    // Jadwalkan pemanggilan fungsi update (lebih lama interval)
+}
+
+// Fungsi untuk menangani input keyboard
+void keyboard(unsigned char key, int x, int y) {
+    switch (key) {
+    case 'w':  // Rotasi ke atas
+        rotationX -= 5.0f;
+        break;
+    case 's':  // Rotasi ke bawah
+        rotationX += 5.0f;
+        break;
+    case 'a':  // Rotasi ke kiri
+        rotationY -= 5.0f;
+        break;
+    case 'd':  // Rotasi ke kanan
+        rotationY += 5.0f;
+        break;
+    }
+    glutPostRedisplay(); // Perbarui tampilan
+}
+
+// Fungsi untuk inisialisasi OpenGL
+void init() {
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+
+    // Konfigurasi sumber cahaya
+    GLfloat lightPosition[] = { 1.0f, 1.0f, 1.0f, 0.0f };
+    GLfloat lightAmbient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+    GLfloat lightDiffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+    GLfloat lightSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
+
+    glClearColor(0.5, 0.5, 1.0, 1.0);       // Latar belakang biru muda
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45.0, 1.0, 0.1, 10.0);
+    glMatrixMode(GL_MODELVIEW);
+
+    glShadeModel(GL_SMOOTH); // Aktifkan shading halus
+}
+
+// Fungsi utama
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(800, 800);
+    glutCreateWindow("Animasi Bunga Mekar dan Menguncup dengan Awan Bergerak");
+    init();
+    glutDisplayFunc(display);
+    glutKeyboardFunc(keyboard); // Fungsi untuk menangani input keyboard
+    glutTimerFunc(16, update, 0); // Jadwalkan animasi
+    glutMainLoop();
+    return 0;
+}
