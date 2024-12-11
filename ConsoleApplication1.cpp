@@ -55,3 +55,73 @@ void drawCloud(float xPos, float yPos, float zPos, float scale) {
 
     glPopMatrix();
 }
+// Fungsi untuk menggambar mawar dalam 3D dengan volume lebih banyak dan rapat
+void drawRose3D(float scale) {
+    // Kelopak merah besar (lapisan luar di depan)
+    for (int i = 0; i < 22; ++i) { // Tambahkan lebih banyak kelopak (12 + 10)
+        glPushMatrix();
+        glRotatef(i * 16.36, 0.0, 0.0, 1.0); // Rotasi dengan sudut yang lebih kecil
+        glTranslatef(0.0, 0.0, -0.015f);     // Offset z lebih rapat
+        glScalef(1.8, 0.8, 1.0);
+        drawCircle3D(0.5, 1.0, 0.0, 0.0, 0.0f, scale);
+        glPopMatrix();
+    }
+
+    // Kelopak merah menengah (lapisan kedua)
+    for (int i = 0; i < 22; ++i) { // Tambahkan lebih banyak kelopak (12 + 10)
+        glPushMatrix();
+        glRotatef(i * 16.36, 0.0, 0.0, 1.0); // Rotasi dengan sudut yang lebih kecil
+        glTranslatef(0.0, 0.0, -0.03f);      // Offset z lebih rapat
+        glScalef(1.5, 0.7, 1.0);
+        drawCircle3D(0.4, 0.9, 0.1, 0.1, -0.01f, scale);
+        glPopMatrix();
+    }
+
+    // Kelopak hitam (lapisan lebih dalam)
+    for (int i = 0; i < 18; ++i) { // Tambahkan lebih banyak kelopak (8 + 10)
+        glPushMatrix();
+        glRotatef(i * 20.0, 0.0, 0.0, 1.0); // Rotasi dengan sudut yang lebih kecil
+        glTranslatef(0.0, 0.0, -0.045f);    // Offset z lebih rapat
+        glScalef(1.3, 0.7, 1.0);
+        drawCircle3D(0.33, 0.1, 0.1, 0.1, -0.02f, scale);
+        glPopMatrix();
+    }
+
+    // Lapisan tengah kelopak merah kecil
+    for (int i = 0; i < 16; ++i) { // Tambahkan lebih banyak kelopak (6 + 10)
+        glPushMatrix();
+        glRotatef(i * 22.5, 0.0, 0.0, 1.0); // Rotasi dengan sudut yang lebih kecil
+        glTranslatef(0.0, 0.0, -0.06f);     // Offset z lebih rapat
+        glScalef(0.9, 0.5, 1.0);
+        drawCircle3D(0.2, 1.0, 0.0, 0.0, 0.01f, scale);
+        glPopMatrix();
+    }
+
+    // Inti bunga (lapisan paling dalam)
+    drawCircle3D(0.1, 1.0, 0.0, 0.0, 0.08f, scale);
+}
+
+// Fungsi untuk menggambar mawar
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+
+    // Atur kamera untuk tampilan 3D
+    gluLookAt(0.0, 0.0, 2.0,  // Posisi kamera
+        0.0, 0.0, 0.0,  // Titik yang dilihat kamera
+        0.0, 1.0, 0.0); // Arah atas kamera
+
+    // Gambar awan bergerak di latar belakang
+    drawCloud(cloudPosX, 1.0f, -2.0f, 1.0f);  // Gambar awan pada posisi awal
+
+    // Terapkan rotasi berdasarkan input keyboard
+    glRotatef(rotationX, 1.0, 0.0, 0.0); // Rotasi pada sumbu X
+    glRotatef(rotationY, 0.0, 1.0, 0.0); // Rotasi pada sumbu Y
+
+    // Gambar mawar di tengah layar
+    glPushMatrix();
+    drawRose3D(bloomScale); // Tambahkan skala untuk animasi
+    glPopMatrix();
+
+    glutSwapBuffers();
+}
